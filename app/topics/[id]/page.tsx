@@ -49,14 +49,16 @@ export default function TopicPage() {
 
         <div className="bg-surface-white rounded-voog-lg shadow-voog-card border border-border-subtle overflow-hidden relative z-10">
           
-          <div className="flex border-b border-border-subtle bg-gray-50/50">
+          {/* --- כאן בוצע השינוי: הוספת גלילה אופקית ומניעת שבירת שורות --- */}
+          <div className="flex overflow-x-auto whitespace-nowrap border-b border-border-subtle bg-gray-50/50 scrollbar-hide">
             {TABS.map((tab) => {
               const isActive = activeTab === tab.id;
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex-1 py-4 px-6 text-lg font-semibold flex items-center justify-center gap-2 transition-all duration-200 border-b-4 ${
+                  /* הוספתי shrink-0 כדי שהכפתורים לא יתכווצו במסך קטן */
+                  className={`flex-1 shrink-0 py-4 px-6 text-lg font-semibold flex items-center justify-center gap-2 transition-all duration-200 border-b-4 ${
                     isActive 
                       ? 'border-brand-primary text-brand-primary bg-white' 
                       : 'border-transparent text-text-muted hover:text-text-main hover:bg-gray-100'
