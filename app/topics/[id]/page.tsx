@@ -3,16 +3,19 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+// ייבוא האייקונים החדשים מ-Lucide
+import { FileText, Presentation, PlaySquare, GraduationCap, ArrowRight, Headset, Maximize2 } from 'lucide-react'; 
 import { topicsData } from '../../../lib/data';
 import Quiz from '../../../components/Quiz';
 import Chatbot from '../../../components/Chatbot';
 import Timeline from '../../../components/Timeline';
 
+// הגדרת הטאבים עם רכיבי האייקונים הוקטוריים
 const TABS = [
-  { id: 'material', label: 'חומר כתוב', icon: '📚' },
-  { id: 'presentations', label: 'מצגות', icon: '📽️' },
-  { id: 'videos', label: 'סרטונים', icon: '🎬' },
-  { id: 'practice', label: 'תרגול (קהוט)', icon: '❓' },
+  { id: 'material', label: 'חומר כתוב', icon: FileText },
+  { id: 'presentations', label: 'מצגות', icon: Presentation },
+  { id: 'videos', label: 'סרטונים', icon: PlaySquare },
+  { id: 'practice', label: 'תרגול (קהוט)', icon: GraduationCap },
 ];
 
 export default function TopicPage() {
@@ -36,9 +39,10 @@ export default function TopicPage() {
       <div className="max-w-5xl mx-auto mt-8">
         <Link 
           href="/" 
-          className="inline-flex items-center gap-2 text-text-muted hover:text-brand-primary font-medium transition-colors mb-8"
+          className="inline-flex items-center gap-2 text-text-muted hover:text-[#0000a0] font-medium transition-colors mb-8"
         >
-          &rarr; חזרה למסך הראשי
+          <ArrowRight size={20} />
+          חזרה למסך הראשי
         </Link>
         
         <h1 className="text-4xl font-extrabold text-text-main mb-6">
@@ -49,22 +53,24 @@ export default function TopicPage() {
 
         <div className="bg-surface-white rounded-voog-lg shadow-voog-card border border-border-subtle overflow-hidden relative z-10">
           
-          {/* --- כאן בוצע השינוי: הוספת גלילה אופקית ומניעת שבירת שורות --- */}
+          {/* תפריט הטאבים המעודכן */}
           <div className="flex overflow-x-auto whitespace-nowrap border-b border-border-subtle bg-gray-50/50 scrollbar-hide">
             {TABS.map((tab) => {
               const isActive = activeTab === tab.id;
+              const IconComponent = tab.icon;
+              
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  /* הוספתי shrink-0 כדי שהכפתורים לא יתכווצו במסך קטן */
-                  className={`flex-1 shrink-0 py-4 px-6 text-lg font-semibold flex items-center justify-center gap-2 transition-all duration-200 border-b-4 ${
+                  className={`flex-1 shrink-0 py-4 px-6 text-lg font-semibold flex items-center justify-center gap-3 transition-all duration-200 border-b-4 ${
                     isActive 
-                      ? 'border-brand-primary text-brand-primary bg-white' 
+                      ? 'bg-white border-[#0000a0]' 
                       : 'border-transparent text-text-muted hover:text-text-main hover:bg-gray-100'
                   }`}
+                  style={{ color: isActive ? '#0000a0' : undefined }}
                 >
-                  <span>{tab.icon}</span>
+                  <IconComponent size={22} strokeWidth={isActive ? 2.5 : 2} />
                   <span>{tab.label}</span>
                 </button>
               );
@@ -77,14 +83,14 @@ export default function TopicPage() {
             {activeTab === 'material' && (
               <div className="animate-fade-in flex flex-col gap-6">
                 
-                {/* --- נגן הפודקאסט --- */}
+                {/* נגן פודקאסט מעודכן */}
                 {topic.audioUrl && (
-                  <div className="bg-blue-50/50 border border-brand-primary/20 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-center gap-4 shadow-sm transition-all hover:shadow-md">
-                    <div className="bg-brand-primary text-white w-14 h-14 rounded-full flex items-center justify-center shrink-0 shadow-md">
-                      <span className="text-3xl relative top-[2px]">🎧</span>
+                  <div className="bg-blue-50/50 border border-[#0000a0]/20 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-center gap-4 shadow-sm transition-all hover:shadow-md">
+                    <div className="bg-[#0000a0] text-white w-14 h-14 rounded-full flex items-center justify-center shrink-0 shadow-md">
+                      <Headset size={28} />
                     </div>
                     <div className="flex-1 w-full">
-                      <h3 className="font-bold text-brand-dark mb-3 text-lg">האזן לסיכום (פודקאסט)</h3>
+                      <h3 className="font-bold text-[#0000a0] mb-3 text-lg">האזן לסיכום (פודקאסט)</h3>
                       <audio controls className="w-full h-11 outline-none rounded-lg">
                         <source src={topic.audioUrl} type="audio/mp4" />
                         <source src={topic.audioUrl} type="audio/mpeg" />
@@ -105,9 +111,9 @@ export default function TopicPage() {
                         href={topic.materialPdf} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 bg-brand-secondary text-brand-dark hover:bg-brand-primary hover:text-white font-semibold py-2 px-5 rounded-voog-base transition-colors shadow-sm"
+                        className="inline-flex items-center gap-2 bg-brand-secondary text-brand-dark hover:bg-[#0000a0] hover:text-white font-semibold py-2 px-5 rounded-voog-base transition-colors shadow-sm"
                       >
-                        <span className="text-xl">⛶</span>
+                        <Maximize2 size={18} />
                         <span>פתח במסך מלא</span>
                       </a>
                     </div>
@@ -139,9 +145,9 @@ export default function TopicPage() {
                             href={url} 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 bg-brand-secondary text-brand-dark hover:bg-brand-primary hover:text-white font-semibold py-2 px-5 rounded-voog-base transition-colors shadow-sm"
+                            className="inline-flex items-center gap-2 bg-brand-secondary text-brand-dark hover:bg-[#0000a0] hover:text-white font-semibold py-2 px-5 rounded-voog-base transition-colors shadow-sm"
                           >
-                            <span className="text-xl">⛶</span>
+                            <Maximize2 size={18} />
                             <span>פתח במסך מלא</span>
                           </a>
                         </div>

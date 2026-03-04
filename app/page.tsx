@@ -1,51 +1,73 @@
+'use client';
+
+import React from 'react';
 import Link from 'next/link';
+import { BookOpen, Landmark, Map, ShieldAlert, FileText, ArrowLeft } from 'lucide-react';
 import { topicsData } from '../lib/data';
 
-export default function Home() {
+export default function Dashboard() {
+  const topicIcons: Record<string, React.ElementType> = {
+    'nationalism': BookOpen,
+    'second-temple': Landmark,
+    'building-state': Map,
+    'totalitarianism': ShieldAlert,
+  };
+
   return (
-    <main className="min-h-screen bg-surface-ground p-4 sm:p-8 dir-rtl" dir="rtl">
-      <div className="max-w-5xl mx-auto mt-8 sm:mt-12">
+    <main className="min-h-screen bg-surface-ground p-8 font-sans" dir="rtl">
+      <div className="max-w-6xl mx-auto">
         
-        {/* --- אזור הפתיחה (Hero) עם כפתור המחולל --- */}
-        <div className="text-center max-w-3xl mx-auto mb-16 animate-fade-in">
-          <h1 className="text-5xl md:text-6xl font-black text-text-main mb-6 tracking-tight">
-            הכנה לבגרות <span className="text-brand-primary">בהיסטוריה</span>
+        <header className="text-center mb-16">
+          <h1 className="text-6xl font-black text-gray-900 mb-6 tracking-tight">
+            הכנה לבגרות <span className="text-[#0000a0]">בהיסטוריה</span>
           </h1>
-          <p className="text-xl text-text-muted mb-8 leading-relaxed">
+          <p className="text-xl text-text-muted max-w-2xl mx-auto">
             כל החומר למיקוד, מצגות, סיכומים ותרגולים אינטראקטיביים שיעזרו לכם להגיע מוכנים.
           </p>
           
-          {/* הכפתור החדש למחולל הבחינות! */}
-          <Link 
-            href="/exam" 
-            className="inline-flex items-center justify-center gap-3 bg-brand-primary hover:bg-brand-dark text-white font-bold text-lg py-4 px-8 rounded-full shadow-lg transition-transform hover:-translate-y-1 hover:shadow-xl"
-          >
-            <span className="text-2xl">📝</span>
-            מחולל בחינות (סימולטור)
+          {/* הקישור המעודכן לנתיב הקיים בתיקיות שלך */}
+          <Link href="/exam">
+            <button className="mt-10 bg-[#0000a0] hover:bg-[#000080] text-white px-8 py-4 rounded-full font-bold text-lg shadow-lg flex items-center gap-3 mx-auto transition-transform hover:scale-105">
+              <FileText size={22} />
+              מחולל בחינות (סימולטור)
+            </button>
           </Link>
-        </div>
+        </header>
 
-        {/* --- רשימת נושאי הלימוד --- */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">
-          {Object.values(topicsData).map((topic) => (
-            <Link 
-              key={topic.id} 
-              href={`/topics/${topic.id}`} 
-              className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-all border border-border-subtle group hover:-translate-y-1"
-            >
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-2xl font-bold text-brand-dark group-hover:text-brand-primary transition-colors">
-                  {topic.title}
-                </h2>
-                <span className="text-brand-primary/50 group-hover:text-brand-primary transition-colors text-2xl">
-                  &larr;
-                </span>
-              </div>
-              <p className="text-text-muted">לחץ לכניסה לחומרי הלימוד, סיכומים, ציר זמן ותרגול.</p>
-            </Link>
-          ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {Object.values(topicsData).map((topic) => {
+            let Icon = topicIcons[topic.id];
+            if (!Icon) {
+              if (topic.id.includes('building')) Icon = Map;
+              else Icon = BookOpen;
+            }
+            
+            return (
+              <Link 
+                key={topic.id}
+                href={`/topics/${topic.id}`}
+                className="group bg-white rounded-3xl p-8 border border-border-subtle shadow-voog-card hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex justify-between items-start"
+              >
+                <div className="flex-1">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="p-3 bg-blue-50 rounded-2xl text-[#0000a0] group-hover:bg-[#0000a0] group-hover:text-white transition-colors">
+                      <Icon size={28} />
+                    </div>
+                    <h2 className="text-2xl font-bold text-gray-900 group-hover:text-[#0000a0] transition-colors">
+                      {topic.title}
+                    </h2>
+                  </div>
+                  <p className="text-text-muted leading-relaxed">
+                    לחץ לכניסה לחומרי הלימוד, סיכומים, ציר זמן ותרגול.
+                  </p>
+                </div>
+                <div className="text-[#0000a0] opacity-30 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
+                  <ArrowLeft size={28} />
+                </div>
+              </Link>
+            );
+          })}
         </div>
-        
       </div>
     </main>
   );
