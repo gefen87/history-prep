@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+// 1. ייבוא הרכיב של גוגל אנליטיקס (חייב להיות למעלה יחד עם שאר הייבואים)
+import { GoogleAnalytics } from '@next/third-parties/google';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,12 +25,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    // הוספתי הגדרת שפה לעברית וכיווניות ימין-לשמאל
+    <html lang="he" dir="rtl">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
       </body>
+      
+      {/* 2. הטמעת האנליטיקס עם ה-ID שלך ממש לפני סגירת ה-html */}
+      <GoogleAnalytics gaId="G-TK2ZJK375X" />
     </html>
   );
 }
