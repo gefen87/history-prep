@@ -122,7 +122,7 @@ export const topicsData: Record<string, TopicContent> = {
     id: 'nationalism',
     title: 'לאומיות',
     material: '',
-    materialPdf: '/pdfs/nationalism.pdf',
+    materialPdf: '/pdfs/modern_nationalism.pdf',
     audioUrl: '/audio/nationalism.m4a',
     presentations: ['/pdfs/ppt_nationalism.pdf'],
     videos: ['GVZuRj1x7KM','doKHB3fz0fk','reRyU_VR4h4'],
