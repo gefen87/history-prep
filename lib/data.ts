@@ -124,7 +124,7 @@ export const topicsData: Record<string, TopicContent> = {
     material: '',
     materialPdf: '/pdfs/modern_nationalism.pdf',
     audioUrl: '/audio/nationalism.m4a',
-    presentations: ['/pdfs/ppt_nationalism.pdf'],
+    presentations: ['/pdfs/ppt_nationalism2.pdf'],
     videos: ['GVZuRj1x7KM','doKHB3fz0fk','reRyU_VR4h4'],
     practice: [
       {
