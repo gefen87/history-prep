@@ -210,9 +210,9 @@ export const topicsData: Record<string, TopicContent> = {
     id: 'totalitarianism',
     title: 'טוטאליטריות ושואה',
     material: '',
-    materialPdf: '/pdfs/totalitarion.pdf',
+    materialPdf: '/pdfs/nazism.pdf',
     audioUrl: '/audio/totalitarism.m4a',
-    presentations: ['/pdfs/ppt_toatlitarian.pdf'],
+    presentations: ['/pdfs/ppt_nazism.pdf'],
     videos: ['Guw_83h2DTk','TMz4rPLiKWw','KjacWt4XyD4','P6QXvPD98JM','PrfewO4DHpU'],
     practice: [
       {
