@@ -298,7 +298,7 @@ export const topicsData: Record<string, TopicContent> = {
     id: 'state-building',
     title: 'בונים מדינה במזה"ת',
     material: '',
-    materialPdf: '/pdfs/1948_onwards.pdf',
+    materialPdf: '/pdfs/israel_summery.pdf',
     // כאן הכנסנו את הקובץ האמיתי שלך!
     audioUrl: '/audio/1948_onwards.m4a',
     presentations: ['/pdfs/ppt_israel.pdf'],
