@@ -31,9 +31,9 @@ export const topicsData: Record<string, TopicContent> = {
     id: 'second-temple',
     title: 'תקופת בית שני',
     material: '',
-    materialPdf: '/pdfs/heshmonaim.pdf',
+    materialPdf: '/pdfs/heshmonaim2.pdf',
     audioUrl: '/audio/heshmonaim.m4a',
-    presentations: ['/pdfs/ppt_heshmonaim.pdf'],
+    presentations: ['/pdfs/ppt_heshmonaim2.pdf'],
     videos:[
       'FF0l27YGKnY', // סרטון ראשון
       'crQUdT40XLs'  // סרטון שני
