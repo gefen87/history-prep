@@ -25,12 +25,13 @@ export default function FlipCard({ event }: FlipCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
 
   return (
+    // 1. הוספנו cursor-pointer ו-group
     <div 
       className="w-72 h-[400px] perspective-1000 cursor-pointer group"
       onClick={() => setIsFlipped(!isFlipped)}
     >
       <div 
-        className={`relative w-full h-full duration-700 preserve-3d ${isFlipped ? 'rotate-y-180' : ''}`}
+        className={`relative w-full h-full duration-700 preserve-3d transition-transform ${isFlipped ? 'rotate-y-180' : ''}`}
         style={{ transformStyle: "preserve-3d", transition: "transform 0.7s" }}
       >
         
@@ -45,7 +46,11 @@ export default function FlipCard({ event }: FlipCardProps) {
           </h3>
 
           {/* 2. התמונה - גובה קבוע, גאפ של 4 פיקסלים מהכותרת (mt-1) */}
-          <div className="relative w-full h-[280px] rounded-2xl overflow-hidden shadow-md mt-1 bg-white">
+          {/* הוספנו אפקטי ריחוף על התמונה כרטיסייה: */}
+          {/* shadow-md -> shadow-xl (העמקת הצל) */}
+          {/* transition-all duration-300 (אנימציה חלקה) */}
+          {/* group-hover:-translate-y-2 (תזוזה של 2 פיקסלים למעלה) */}
+          <div className="relative w-full h-[280px] rounded-2xl overflow-hidden shadow-md mt-1 bg-white transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-2">
             <Image 
               src={event.imageUrl} 
               alt={event.title}
@@ -56,8 +61,9 @@ export default function FlipCard({ event }: FlipCardProps) {
           </div>
 
           {/* 3. טקסט תחתון - גאפ של 4 פיקסלים מהתמונה (mt-1) */}
+          {/* הוספנו group-hover:underline כדי שגם הטקסט יגיב לריחוף על הכרטיסייה */}
           <div className="text-left w-full pl-2 mt-1">
-            <span className="text-blue-700 text-sm font-medium hover:underline">
+            <span className="text-blue-700 text-sm font-medium transition-all group-hover:underline">
               גלה עוד...
             </span>
           </div>
@@ -95,7 +101,7 @@ export default function FlipCard({ event }: FlipCardProps) {
               target="_blank" 
               rel="noopener noreferrer"
               className="inline-block px-6 py-2.5 bg-blue-600 text-white rounded-full text-sm font-semibold hover:bg-blue-700 shadow-sm transition-all"
-              onClick={(e) => e.stopPropagation()} 
+              onClick={(e) => e.stopPropagation()} // מונע מהקליק על הכפתור להפוך את הכרטיסייה חזרה
             >
               לצפייה בסרטון
             </a>
