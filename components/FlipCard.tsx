@@ -4,7 +4,6 @@ import { useState } from "react";
 import Image from "next/image";
 import { Lato } from "next/font/google";
 
-// הגדרת הפונט Lato
 const lato = Lato({
   weight: ["400", "700"],
   subsets: ["latin"],
@@ -25,9 +24,9 @@ export default function FlipCard({ event }: FlipCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
 
   return (
-    // 1. הוספנו cursor-pointer ו-group
+    // 1. שינינו ל- group/card כדי לבודד את הכרטיסייה משאר העמוד
     <div 
-      className="w-72 h-[400px] perspective-1000 cursor-pointer group"
+      className="w-72 h-[400px] perspective-1000 cursor-pointer group/card"
       onClick={() => setIsFlipped(!isFlipped)}
     >
       <div 
@@ -40,17 +39,12 @@ export default function FlipCard({ event }: FlipCardProps) {
           className="absolute w-full h-full flex flex-col bg-transparent"
           style={{ backfaceVisibility: "hidden" }}
         >
-          {/* 1. כותרת עליונה */}
           <h3 className="text-center font-semibold text-gray-800 text-[17px] px-2 mb-0">
             {event.year}: {event.title}
           </h3>
 
-          {/* 2. התמונה - גובה קבוע, גאפ של 4 פיקסלים מהכותרת (mt-1) */}
-          {/* הוספנו אפקטי ריחוף על התמונה כרטיסייה: */}
-          {/* shadow-md -> shadow-xl (העמקת הצל) */}
-          {/* transition-all duration-300 (אנימציה חלקה) */}
-          {/* group-hover:-translate-y-2 (תזוזה של 2 פיקסלים למעלה) */}
-          <div className="relative w-full h-[280px] rounded-2xl overflow-hidden shadow-md mt-1 bg-white transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-2">
+          {/* 2. עדכנו את אפקטי הריחוף ל- group-hover/card */}
+          <div className="relative w-full h-[280px] rounded-2xl overflow-hidden shadow-md mt-1 bg-white transition-all duration-300 group-hover/card:shadow-xl group-hover/card:-translate-y-2">
             <Image 
               src={event.imageUrl} 
               alt={event.title}
@@ -60,10 +54,9 @@ export default function FlipCard({ event }: FlipCardProps) {
             />
           </div>
 
-          {/* 3. טקסט תחתון - גאפ של 4 פיקסלים מהתמונה (mt-1) */}
-          {/* הוספנו group-hover:underline כדי שגם הטקסט יגיב לריחוף על הכרטיסייה */}
           <div className="text-left w-full pl-2 mt-1">
-            <span className="text-blue-700 text-sm font-medium transition-all group-hover:underline">
+            {/* 3. עדכנו גם כאן ל- group-hover/card */}
+            <span className="text-blue-700 text-sm font-medium transition-all group-hover/card:underline">
               גלה עוד...
             </span>
           </div>
@@ -82,7 +75,6 @@ export default function FlipCard({ event }: FlipCardProps) {
               {event.year}
             </h3>
             
-            {/* רשימה עם יישור שורות מושלם */}
             <ul className={`${lato.className} list-disc list-outside pr-5 text-gray-700 space-y-2.5 text-right`}>
               {event.bulletPoints.map((point, index) => (
                 <li 
@@ -101,7 +93,7 @@ export default function FlipCard({ event }: FlipCardProps) {
               target="_blank" 
               rel="noopener noreferrer"
               className="inline-block px-6 py-2.5 bg-blue-600 text-white rounded-full text-sm font-semibold hover:bg-blue-700 shadow-sm transition-all"
-              onClick={(e) => e.stopPropagation()} // מונע מהקליק על הכפתור להפוך את הכרטיסייה חזרה
+              onClick={(e) => e.stopPropagation()} 
             >
               לצפייה בסרטון
             </a>
