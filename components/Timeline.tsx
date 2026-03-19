@@ -1,55 +1,79 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { TimelineEvent } from '../lib/data';
+import { useRef } from "react";
+import FlipCard from "./FlipCard"; // הקומפוננטה שיצרנו
+import { TimelineEvent } from "@/lib/data"; // מושך את ה-Interface המעודכן מקובץ הנתונים
 
 interface TimelineProps {
-  events?: TimelineEvent[];
+  events: TimelineEvent[];
 }
 
 export default function Timeline({ events }: TimelineProps) {
-  // אם אין אירועים, לא נציג כלום
-  if (!events || events.length === 0) return null;
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: "left" | "right") => {
+    if (scrollRef.current) {
+      const scrollAmount = direction === "left" ? -320 : 320;
+      scrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
+    }
+  };
+
+  if (!events || events.length === 0) {
+    return null;
+  }
 
   return (
-    <div className="w-full mb-8 overflow-x-auto pb-6 pt-2" dir="rtl">
-      <div className="flex items-start min-w-max px-2">
-        {events.map((event, index) => (
-          <div key={index} className="relative flex flex-col items-center w-56 group">
-            
-            {/* הקו המחבר והחץ - העדכון בוצע בשורה הזו כדי למרכז אותם בול! */}
-            {index !== events.length - 1 && (
-              <div className="absolute top-4 right-1/2 w-full -translate-y-1/2 flex items-center justify-center z-0">
-                {/* הפס עצמו */}
-                <div className="absolute w-full h-[3px] bg-brand-primary/30 group-hover:bg-brand-primary/60 transition-colors"></div>
-                
-                {/* חץ SVG אמיתי שיושב באמצע הקו */}
-                <svg 
-                  className="w-6 h-6 text-brand-primary/50 group-hover:text-brand-primary relative z-10 transition-colors bg-surface-ground rounded-full" 
-                  fill="currentColor" 
-                  viewBox="0 0 20 20"
-                >
-                  <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-              </div>
-            )}
-            
-            {/* הנקודה המרכזית על הציר */}
-            <div className="w-8 h-8 rounded-full bg-surface-white border-4 border-brand-primary flex items-center justify-center z-10 shadow-sm transition-transform duration-300 group-hover:scale-125">
-              <div className="w-2 h-2 rounded-full bg-brand-primary"></div>
-            </div>
-            
-            {/* כרטיסיית התוכן */}
-            <div className="mt-6 bg-white p-4 rounded-xl border border-border-subtle shadow-sm text-center w-[90%] transition-all duration-300 hover:shadow-md hover:-translate-y-1">
-              <span className="inline-block px-3 py-1 bg-brand-secondary text-brand-dark font-black rounded-md text-sm mb-3">
-                {event.year}
-              </span>
-              <h4 className="font-bold text-text-main text-base mb-2 leading-tight">{event.title}</h4>
-              <p className="text-sm text-text-muted leading-relaxed">{event.description}</p>
-            </div>
-          </div>
-        ))}
+    <div className="w-full relative group my-8" dir="rtl">
+      
+      {/* חץ ימינה (תחילת הציר) - מוסתר בנייד */}
+      <div className="hidden md:flex absolute top-0 right-0 h-[400px] w-24 bg-gradient-to-l from-gray-50 to-transparent z-10 items-center justify-center pointer-events-none">
+        <button
+          onClick={() => scroll("right")}
+          className="w-12 h-16 bg-white/80 hover:bg-white shadow-lg rounded-xl flex items-center justify-center pointer-events-auto backdrop-blur-sm transition"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
       </div>
+
+      {/* חץ שמאלה (המשך הציר) - מוסתר בנייד */}
+      <div className="hidden md:flex absolute top-0 left-0 h-[400px] w-24 bg-gradient-to-r from-gray-50 to-transparent z-10 items-center justify-center pointer-events-none">
+        <button
+          onClick={() => scroll("left")}
+          className="w-12 h-16 bg-white/80 hover:bg-white shadow-lg rounded-xl flex items-center justify-center pointer-events-auto backdrop-blur-sm transition"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+      </div>
+
+      {/* הקונטיינר הנגלל עם הכרטיסיות */}
+      <div 
+        ref={scrollRef}
+        className="flex gap-[44px] overflow-x-auto px-6 md:px-24 pb-8 pt-4 snap-x snap-mandatory scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+      >
+        {events.map((event) => {
+          // רשת הביטחון: בודק אם הנתונים כבר עודכנו למבנה החדש (שיש בולטים והם מערך)
+          const isUpdated = Array.isArray(event.bulletPoints);
+
+          if (!isUpdated) {
+            return (
+              <div key={event.id || event.title} className="snap-center shrink-0 w-72 h-[400px] bg-gray-100 rounded-2xl border border-dashed border-gray-300 flex items-center justify-center text-center p-4">
+                <p className="text-gray-500 font-medium">הכרטיסיות לנושא זה יתעדכנו בקרוב...</p>
+              </div>
+            );
+          }
+
+          return (
+            <div key={event.id} className="snap-center shrink-0">
+              <FlipCard event={event} />
+            </div>
+          );
+        })}
+      </div>
+
     </div>
   );
 }
