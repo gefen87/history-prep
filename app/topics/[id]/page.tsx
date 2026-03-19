@@ -49,7 +49,7 @@ export default function TopicPage() {
           {topic.title}
         </h1>
 
-        <Timeline events={topic.timeline} />
+        <Timeline events={topic.timeline || []} />
 
         <div className="bg-surface-white rounded-voog-lg shadow-voog-card border border-border-subtle overflow-hidden relative z-10">
           
