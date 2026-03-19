@@ -65,20 +65,22 @@ export default function RootLayout({
   return (
     // הגדרת שפה לעברית וכיווניות ימין-לשמאל
     <html lang="he" dir="rtl">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {/* 3. הזרקת קוד הסכמה עבור מנועי החיפוש */}
+      {/* 3. הוספת תגית head מפורשת עבור הסכמה */}
+      <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        
-        {children}
-      </body>
+      </head>
       
-      {/* 4. הטמעת האנליטיקס עם ה-ID שלך ממש לפני סגירת ה-html */}
-      <GoogleAnalytics gaId="G-TK2ZJK375X" />
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        {children}
+        
+        {/* 4. האנליטיקס בתוך ה-body */}
+        <GoogleAnalytics gaId="G-TK2ZJK375X" />
+      </body>
     </html>
   );
 }
