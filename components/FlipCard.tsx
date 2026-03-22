@@ -18,13 +18,15 @@ interface FlipCardProps {
     bulletPoints: string[];
     youtubeLink: string;
   };
+  // הוספנו את המאפיין החדש:
+  priority?: boolean;
 }
 
-export default function FlipCard({ event }: FlipCardProps) {
+// קיבלנו את ה-priority כפרופ
+export default function FlipCard({ event, priority = false }: FlipCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
 
   return (
-    // 1. שינינו ל- group/card כדי לבודד את הכרטיסייה משאר העמוד
     <div 
       className="w-72 h-[400px] perspective-1000 cursor-pointer group/card"
       onClick={() => setIsFlipped(!isFlipped)}
@@ -34,7 +36,7 @@ export default function FlipCard({ event }: FlipCardProps) {
         style={{ transformStyle: "preserve-3d", transition: "transform 0.7s" }}
       >
         
-        {/* צד קדמי (Front) */}
+        {/* צד קדמי */}
         <div 
           className="absolute w-full h-full flex flex-col bg-transparent"
           style={{ backfaceVisibility: "hidden" }}
@@ -43,7 +45,6 @@ export default function FlipCard({ event }: FlipCardProps) {
             {event.year}: {event.title}
           </h3>
 
-          {/* 2. עדכנו את אפקטי הריחוף ל- group-hover/card */}
           <div className="relative w-full h-[280px] rounded-2xl overflow-hidden shadow-md mt-1 bg-white transition-all duration-300 group-hover/card:shadow-xl group-hover/card:-translate-y-2">
             <Image 
               src={event.imageUrl} 
@@ -51,18 +52,18 @@ export default function FlipCard({ event }: FlipCardProps) {
               fill
               sizes="(max-width: 768px) 100vw, 288px"
               className="object-cover"
+              priority={priority} // כאן אנחנו אומרים ל-Next.js אם התמונה הזו קריטית לטעינה הראשונית
             />
           </div>
 
           <div className="text-left w-full pl-2 mt-1">
-            {/* 3. עדכנו גם כאן ל- group-hover/card */}
             <span className="text-blue-700 text-sm font-medium transition-all group-hover/card:underline">
               גלה עוד...
             </span>
           </div>
         </div>
 
-        {/* צד אחורי (Back) */}
+        {/* צד אחורי */}
         <div 
           className="absolute w-full h-full bg-white rounded-2xl shadow-xl border border-gray-200 p-6 flex flex-col justify-between"
           style={{ 
@@ -77,10 +78,7 @@ export default function FlipCard({ event }: FlipCardProps) {
             
             <ul className={`${lato.className} list-disc list-outside pr-5 text-gray-700 space-y-2.5 text-right`}>
               {event.bulletPoints.map((point, index) => (
-                <li 
-                  key={index} 
-                  className="text-[14px] leading-[20px]" 
-                >
+                <li key={index} className="text-[14px] leading-[20px]">
                   {point}
                 </li>
               ))}
