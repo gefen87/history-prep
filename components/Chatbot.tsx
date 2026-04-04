@@ -14,7 +14,7 @@ type Message = {
   options?: string[];
 };
 
-// הגדרנו במדויק ל-TypeScript אילו נתונים הצ'אטבוט הולך לקבל מהעמוד הראשי
+// הגדרת הנתונים שהעמוד הראשי שולח לצ'אטבוט (זה מה שוורסל חיפש!)
 interface ChatbotProps {
   topicId?: string;
   topicTitle?: string;
@@ -22,7 +22,6 @@ interface ChatbotProps {
   topicMaterialPdf?: string;
 }
 
-// עכשיו הפונקציה מקבלת את כל הנתונים, מה שפותר את השגיאה ב-Vercel
 export default function Chatbot({ topicId, topicTitle, topicMaterial, topicMaterialPdf }: ChatbotProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [enlargedImage, setEnlargedImage] = useState<string | null>(null);
@@ -127,7 +126,7 @@ export default function Chatbot({ topicId, topicTitle, topicMaterial, topicMater
           message: userText, 
           activeQuestion: activeQuestion,
           history: messages.slice(-6), 
-          // מעבירים לשרת בדיוק את המידע שהעמוד שלח לנו!
+          // הנתונים האמיתיים שעוברים מהעמוד לבוט:
           topicTitle: topicTitle || "הכנה לבגרות בהיסטוריה", 
           topicMaterial: topicMaterial,
           topicMaterialPdf: topicMaterialPdf 
