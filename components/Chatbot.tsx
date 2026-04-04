@@ -48,6 +48,19 @@ export default function Chatbot({ topicId, topicTitle, topicMaterial, topicMater
     }
   }, [messages, isOpen]);
 
+  // פונקציה חכמה שממפה את העמוד הנוכחי למזהה הנושא הפנימי שלנו (לפי כותרת או ID)
+  const getInternalTopicId = () => {
+    const title = topicTitle || "";
+    const id = topicId || "";
+    
+    if (title.includes("שני") || title.includes("חשמונאים") || id === "second-temple" || id === "1") return "second-temple";
+    if (title.includes("לאומיות") || id === "nationalism" || id === "2") return "nationalism";
+    if (title.includes("שואה") || title.includes("טוטאליטריות") || id === "holocaust" || id === "3") return "holocaust";
+    if (title.includes("בונים") || title.includes("מדינה") || id === "state-building" || id === "4") return "state-building";
+    
+    return ""; // ברירת מחדל
+  };
+
   const handleOptionClick = (option: string) => {
     const newUserMsg: Message = { id: generateId(), role: "user", content: option };
     
@@ -58,10 +71,15 @@ export default function Chatbot({ topicId, topicTitle, topicMaterial, topicMater
     let nextBotMsg: Message;
 
     if (option === "אני רוצה לתרגל" || option === "תרגול נוסף") {
-      const relevantQuestions = topicId 
-        ? practiceQuestions.filter(q => q.topicId === topicId)
+      
+      const internalId = getInternalTopicId();
+      
+      // שולף שאלות רק של הנושא הנוכחי!
+      const relevantQuestions = internalId 
+        ? practiceQuestions.filter(q => q.topicId === internalId)
         : practiceQuestions;
       
+      // במידה ובכל זאת לא נמצאו שאלות לנושא, יציג מכל המאגר כדי לא להיתקע
       const targetQuestions = relevantQuestions.length > 0 ? relevantQuestions : practiceQuestions;
       const randomQuestion = targetQuestions[Math.floor(Math.random() * targetQuestions.length)];
       
@@ -117,6 +135,17 @@ export default function Chatbot({ topicId, topicTitle, topicMaterial, topicMater
     setMessages((prev) => [...prev, newUserMsg]);
     setIsLoading(true);
 
+    const internalId = getInternalTopicId();
+    let pdfPath = topicMaterialPdf || ""; // משתמשים קודם כל במה שהעמוד שלח
+    
+    // אם העמוד לא שלח PDF, נגדיר ידנית לפי הנושא הפנימי
+    if (!pdfPath) {
+      if (internalId === "second-temple") pdfPath = "/pdfs/heshmonaim.pdf";
+      else if (internalId === "nationalism") pdfPath = "/pdfs/nationalism.pdf";
+      else if (internalId === "holocaust") pdfPath = "/pdfs/nazism.pdf";
+      else if (internalId === "state-building") pdfPath = "/pdfs/1948_onwards.pdf";
+    }
+
     try {
       const response = await fetch("/api/chat", {
         method: "POST",
@@ -127,7 +156,7 @@ export default function Chatbot({ topicId, topicTitle, topicMaterial, topicMater
           history: messages.slice(-6), 
           topicTitle: topicTitle || "הכנה לבגרות בהיסטוריה", 
           topicMaterial: topicMaterial,
-          topicMaterialPdf: topicMaterialPdf 
+          topicMaterialPdf: pdfPath 
         }),
       });
 
@@ -155,7 +184,6 @@ export default function Chatbot({ topicId, topicTitle, topicMaterial, topicMater
         };
       }
 
-      // התיקון: הגדרת סוג ההודעה בצורה מפורשת ל-Message כדי ש-TypeScript לא יכעס
       const botResponseMsg: Message = { id: generateId(), role: "bot", content: data.reply };
 
       setMessages((prev) => {
@@ -166,8 +194,7 @@ export default function Chatbot({ topicId, topicTitle, topicMaterial, topicMater
 
     } catch (error) {
       console.error("Failed to get response:", error);
-      // התיקון גם כאן
-      const errorMsg: Message = { id: generateId(), role: "bot", content: "אופס, נראה שיש תקלה זמנית בחיבור לשרת. אנא נסה שוב." };
+      const errorMsg: Message = { id: generateId(), role: "bot", content: "אופס, נראה שיש עומס זמני בשרת (או שהשאלה דורשת קריאה של קובץ כבד). אנא נסה שוב בעוד מספר שניות." };
       setMessages((prev) => [...prev, errorMsg]);
     } finally {
       setIsLoading(false);
@@ -212,10 +239,8 @@ export default function Chatbot({ topicId, topicTitle, topicMaterial, topicMater
                     }`}
                   >
                     
-                    {/* הטקסט מופיע קודם */}
                     <div dangerouslySetInnerHTML={{ __html: msg.content.replace(/\*\*([\s\S]*?)\*\*/g, '<span class="text-blue-950 font-semibold">$1</span>') }} />
                     
-                    {/* התמונה מופיעה מתחת לטקסט */}
                     {msg.imageUrl && (
                       <div 
                         className="relative mt-3 cursor-pointer group rounded-lg overflow-hidden border border-gray-200"
