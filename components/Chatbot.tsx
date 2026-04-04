@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from "react";
 import { practiceQuestions, PracticeQuestion } from "@/lib/questions";
 
-// פונקציה ליצירת מזהה ייחודי לכל הודעה, מונע את השגיאה האדומה ב-React
 const generateId = () => Math.random().toString(36).substring(2, 9);
 
 type Message = {
@@ -15,7 +14,16 @@ type Message = {
   options?: string[];
 };
 
-export default function Chatbot({ topicId }: { topicId?: string }) {
+// הגדרנו במדויק ל-TypeScript אילו נתונים הצ'אטבוט הולך לקבל מהעמוד הראשי
+interface ChatbotProps {
+  topicId?: string;
+  topicTitle?: string;
+  topicMaterial?: string;
+  topicMaterialPdf?: string;
+}
+
+// עכשיו הפונקציה מקבלת את כל הנתונים, מה שפותר את השגיאה ב-Vercel
+export default function Chatbot({ topicId, topicTitle, topicMaterial, topicMaterialPdf }: ChatbotProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [enlargedImage, setEnlargedImage] = useState<string | null>(null);
   
@@ -111,14 +119,6 @@ export default function Chatbot({ topicId }: { topicId?: string }) {
     setMessages((prev) => [...prev, newUserMsg]);
     setIsLoading(true);
 
-    let pdfPath = "";
-    let currentTopicTitle = "הכנה לבגרות בהיסטוריה";
-    
-    if (topicId === "second-temple") pdfPath = "/pdfs/heshmonaim.pdf";
-    else if (topicId === "nationalism") pdfPath = "/pdfs/nationalism.pdf";
-    else if (topicId === "holocaust") pdfPath = "/pdfs/nazism.pdf";
-    else if (topicId === "state-building") pdfPath = "/pdfs/1948_onwards.pdf";
-
     try {
       const response = await fetch("/api/chat", {
         method: "POST",
@@ -126,15 +126,15 @@ export default function Chatbot({ topicId }: { topicId?: string }) {
         body: JSON.stringify({ 
           message: userText, 
           activeQuestion: activeQuestion,
-          // השינוי החשוב: שולחים רק את 6 ההודעות האחרונות כדי למנוע קריסה מרוב עומס נתונים
           history: messages.slice(-6), 
-          topicTitle: currentTopicTitle, 
-          topicMaterialPdf: pdfPath 
+          // מעבירים לשרת בדיוק את המידע שהעמוד שלח לנו!
+          topicTitle: topicTitle || "הכנה לבגרות בהיסטוריה", 
+          topicMaterial: topicMaterial,
+          topicMaterialPdf: topicMaterialPdf 
         }),
       });
 
       if (!response.ok) {
-        // עכשיו אם יש שגיאה, הטרמינל יציג לנו בדיוק למה השרת כועס
         const errorDetails = await response.text();
         console.error("Server Error Details:", errorDetails);
         throw new Error("Network response was not ok");
