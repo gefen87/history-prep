@@ -14,7 +14,6 @@ type Message = {
   options?: string[];
 };
 
-// הגדרת הנתונים שהעמוד הראשי שולח לצ'אטבוט (זה מה שוורסל חיפש!)
 interface ChatbotProps {
   topicId?: string;
   topicTitle?: string;
@@ -126,7 +125,6 @@ export default function Chatbot({ topicId, topicTitle, topicMaterial, topicMater
           message: userText, 
           activeQuestion: activeQuestion,
           history: messages.slice(-6), 
-          // הנתונים האמיתיים שעוברים מהעמוד לבוט:
           topicTitle: topicTitle || "הכנה לבגרות בהיסטוריה", 
           topicMaterial: topicMaterial,
           topicMaterialPdf: topicMaterialPdf 
@@ -157,18 +155,20 @@ export default function Chatbot({ topicId, topicTitle, topicMaterial, topicMater
         };
       }
 
+      // התיקון: הגדרת סוג ההודעה בצורה מפורשת ל-Message כדי ש-TypeScript לא יכעס
+      const botResponseMsg: Message = { id: generateId(), role: "bot", content: data.reply };
+
       setMessages((prev) => {
-        const newMessages = [...prev, { id: generateId(), role: "bot", content: data.reply }];
+        const newMessages = [...prev, botResponseMsg];
         if (nextOptionsMsg) newMessages.push(nextOptionsMsg);
         return newMessages;
       });
 
     } catch (error) {
       console.error("Failed to get response:", error);
-      setMessages((prev) => [
-        ...prev,
-        { id: generateId(), role: "bot", content: "אופס, נראה שיש תקלה זמנית בחיבור לשרת. אנא נסה שוב." }
-      ]);
+      // התיקון גם כאן
+      const errorMsg: Message = { id: generateId(), role: "bot", content: "אופס, נראה שיש תקלה זמנית בחיבור לשרת. אנא נסה שוב." };
+      setMessages((prev) => [...prev, errorMsg]);
     } finally {
       setIsLoading(false);
     }
@@ -212,9 +212,13 @@ export default function Chatbot({ topicId, topicTitle, topicMaterial, topicMater
                     }`}
                   >
                     
+                    {/* הטקסט מופיע קודם */}
+                    <div dangerouslySetInnerHTML={{ __html: msg.content.replace(/\*\*([\s\S]*?)\*\*/g, '<span class="text-blue-950 font-semibold">$1</span>') }} />
+                    
+                    {/* התמונה מופיעה מתחת לטקסט */}
                     {msg.imageUrl && (
                       <div 
-                        className="relative mb-3 cursor-pointer group rounded-lg overflow-hidden border border-gray-200"
+                        className="relative mt-3 cursor-pointer group rounded-lg overflow-hidden border border-gray-200"
                         onClick={() => setEnlargedImage(msg.imageUrl!)}
                       >
                         <img 
@@ -229,8 +233,6 @@ export default function Chatbot({ topicId, topicTitle, topicMaterial, topicMater
                         </div>
                       </div>
                     )}
-
-                    <div dangerouslySetInnerHTML={{ __html: msg.content.replace(/\*\*([\s\S]*?)\*\*/g, '<span class="text-blue-950 font-semibold">$1</span>') }} />
                     
                     {msg.isOptions && msg.options && (
                       <div className="mt-4 flex flex-col gap-2.5">
